@@ -1,0 +1,33 @@
+// define function that updates the plot
+function update_plot()
+{
+    d3.json("data.json").then(function(data){
+        let x = [];
+        let y =[];
+        let label = ""
+        // d3 selector on the dropdown menu "selDataset"
+        let dropdown = d3.select("#selDataset");
+        // access properties from the options in dropdown
+        let dataset = dropdown.property("value");
+        // based on value establish values for traces.
+        if(dataset == 'greek')
+        {
+            y = data.sort((a,b) => b.greekSearchResults - a.greekSearchResults).map(data => data.pair).slice(0,10).reverse();
+            x = data.sort((a, b) => b.greekSearchResults - a.greekSearchResults).map(data => data.greekSearchResults).slice(0,10).reverse();
+            label = 'Greek Search Results';
+        }
+        else if(dataset == 'roman')
+        {
+            y = data.sort((a,b) => b.romanSearchResults - a.romanSearchResults).map(data => data.pair).slice(0,10).reverse();
+            x = data.sort((a, b) => b.romanSearchResults - a.romanSearchResults).map(data => data.romanSearchResults).slice(0,10).reverse();
+            label = 'Roman Search Results';
+        }
+        // .restyle to reset the plot to the right dataset
+        let update = {
+            title: label
+        }
+        Plotly.restyle("plot1", "x", [x]);
+        Plotly.restyle("plot1", "y", [y]);
+        Plotly.relayout("plot1", update);
+});
+}
